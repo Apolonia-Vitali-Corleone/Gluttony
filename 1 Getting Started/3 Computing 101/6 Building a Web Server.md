@@ -99,7 +99,7 @@ _start:
 
 注意下面这张图片
 
-
+![image-20241101192944128](./6%20Building%20a%20Web%20Server.assets/image-20241101192944128.png)
 
 # 3.bind
 
