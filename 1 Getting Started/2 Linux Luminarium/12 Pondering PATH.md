@@ -1,6 +1,8 @@
 # 1
 
-```sh
+## 问题描述
+
+```shell
 hacker@path~the-path-variable:~$ env
 SHELL=/run/dojo/bin/bash
 COLORTERM=truecolor
@@ -26,7 +28,6 @@ TERM_PROGRAM=vscode
 VSCODE_IPC_HOOK_CLI=/tmp/vscode-ipc-661476e9-518c-4135-af15-899328e846c9.sock
 _=/run/workspace/bin/env
 
-
 hacker@path~the-path-variable:~$ PATH=""
 
 hacker@path~the-path-variable:~$ env
@@ -43,6 +44,7 @@ Trying to remove /flag...
 /challenge/run: line 4: rm: No such file or directory
 The flag is still there! I might as well give it to you!
 pwn.college{Qxucz32pIlS3OEvphJobCJKqJpI.QX2cDM1wCO5IzW}
+
 hacker@path~the-path-variable:~$ 
 ```
 
