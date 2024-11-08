@@ -12,6 +12,8 @@
 
 其他的都是相对地址
 
+
+
 # 1-The Root
 
 就是执行程序，执行这个位于根目录下的程序。
@@ -36,73 +38,93 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 # 3-Position thy self
 
+问题描述：切换目录
 
-
-```
-i am lazy......
-```
+![image-20241108142850375](./2%20Pondering%20Paths.assets/image-20241108142850375.png)
 
 
 
 # 4-Position elsewhere
 
+所以你到底想要考察什么？
 
-
-```
-i am lazy......
-```
+![image-20241108143008709](./2%20Pondering%20Paths.assets/image-20241108143008709.png)
 
 
 
 # 5-Position yet elsewhere
 
+？？？？？
 
-
-```
-i am lazy......
-```
+![image-20241108143140149](./2%20Pondering%20Paths.assets/image-20241108143140149.png)
 
 
 
 # 6-implicit relative paths, from /
 
+考察你对相对地址的理解
 
-
-```
-i am lazy......
-```
+![image-20241108143447647](./2%20Pondering%20Paths.assets/image-20241108143447647.png)
 
 
 
 # 7-explicit relative paths, from /
 
+问题描述：
 
+> In most operating systems, including Linux, every directory has two implicit entries that you can reference in paths: `.` and `..`. The first, `.`, refers right to the same directory, so the following absolute paths are all identical to each other:
+>
+> - `/challenge`
+> - `/challenge/.`
+> - `/challenge/./././././././././`
+> - `/./././challenge/././`
+>
+> The following relative paths are also all identical to each other:
+>
+> - `challenge`
+> - `./challenge`
+> - `./././challenge`
+> - `challenge/.`
+>
+> Of course, if your current working directory is `/`, the above relative paths are equivalent to the above absolute paths.
 
-```
-i am lazy......
-```
+写的真好
+
+考察你对.和..的理解。
+
+![image-20241108143835249](./2%20Pondering%20Paths.assets/image-20241108143835249.png)
 
 
 
 # 8-impilcit relative path
 
+你执行文件时，最好的习惯是，使用路径，而不是什么路径都不用。
 
+什么叫做使用路径？
 
 ```
-i am lazy......
+无论是绝对路径，（以/开头）
+还是以.开头的相对路径
+这些都叫做使用路径
 ```
 
+什么叫做不使用路径？
 
+```bash
+直接使用文件或者目录名字
+hacker@paths~implicit-relative-path:/challenge$ run
+hacker@paths~implicit-relative-path:/$ challenge/run
+```
+
+如下图所示：
+
+![image-20241108145243685](./2%20Pondering%20Paths.assets/image-20241108145243685.png)
 
 # 9- home sweet home
 
+哈哈哈记得这个题难倒了许多同学
 
+如图所示：
 
-```
-i am lazy......
-```
-
-
-
-
+![image-20241108145454338](./2%20Pondering%20Paths.assets/image-20241108145454338.png)
 
