@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
 首先，我不确定利用../是否可以就此切换目录，于是我使用cat进行实验
 
-![image-20241031185655670](.\2.1.2 Web Security.assets\image-20241031185655670.png)
+![image-20241031185655670](.\2 Web Security.assets\image-20241031185655670.png)
 
 成功。
 
@@ -99,11 +99,11 @@ if __name__ == '__main__':
 
 curl:
 
-![image-20241031190115107](.\2.1.2 Web Security.assets\image-20241031190115107.png)
+![image-20241031190115107](.\2 Web Security.assets\image-20241031190115107.png)
 
 ipython:
 
-![image-20241031190328611](.\2.1.2 Web Security.assets\image-20241031190328611.png)
+![image-20241031190328611](.\2 Web Security.assets\image-20241031190328611.png)
 
 这怎么办？
 
@@ -113,7 +113,7 @@ ipython:
 
 于是转换后：
 
-![image-20241031190436328](.\2.1.2 Web Security.assets\image-20241031190436328.png)
+![image-20241031190436328](.\2 Web Security.assets\image-20241031190436328.png)
 
 成功。
 
@@ -196,7 +196,7 @@ tratfatf!!!!!!!******Hello, !!!!!!!********World
 
 多出来一些东西：
 
-![image-20241101120756275](.\2.1.2 Web Security.assets\image-20241101120756275.png)
+![image-20241101120756275](.\2 Web Security.assets\image-20241101120756275.png)
 
 所以我们可以利用这个多出来的目录，进行绕过`./`。
 
@@ -378,7 +378,7 @@ url编码，请求后，/home/hacker/flag就会出现，读就行了。
 
 问gpt：
 
-![image-20241101172919385](./2.1.2%20Web%20Security.assets/image-20241101172919385.png)
+![image-20241101172919385](./2%20Web%20Security.assets/image-20241101172919385.png)
 
 所以需要的是换行符的url编码。
 
@@ -660,7 +660,7 @@ app.run("challenge.localhost", 80)
 
 跟上一道题一样，不过不同的地方是，post之后会存储cookies。
 
-![image-20241101185836097](./2.1.2%20Web%20Security.assets/image-20241101185836097.png)
+![image-20241101185836097](.\2%20Web%20Security.assets\image-20241101185836097.png)
 
 用guest登录之后，修改cookies里面的session_user为admin就行。
 
@@ -766,7 +766,7 @@ admin" OR "1" = "1
 
 拼接多个sql语句：
 
-![image-20241105140810906](./2.1.2%20Web%20Security.assets/image-20241105140810906.png)
+![image-20241105140810906](./2%20Web%20Security.assets/image-20241105140810906.png)
 
 一次只能执行一个sql语句。
 
@@ -802,7 +802,7 @@ pin
 
 如下图：
 
-![image-20241105142422722](./2.1.2%20Web%20Security.assets/image-20241105142422722.png)
+![image-20241105142422722](./2%20Web%20Security.assets/image-20241105142422722.png)
 
 
 
@@ -901,7 +901,7 @@ app.run("challenge.localhost", 80)
 
 注入即可
 
-![image-20241105155827986](./2.1.2%20Web%20Security.assets/image-20241105155827986.png)
+![image-20241105155827986](./2%20Web%20Security.assets/image-20241105155827986.png)
 
 ## exp
 
