@@ -18,7 +18,7 @@
 
 就是执行程序，执行这个位于根目录下的程序。
 
-![image-20241106161351376](./2%20Pondering%20Paths.assets/image-20241106161351376.png)
+![image-20241106161351376](./02%20Pondering%20Paths.assets/image-20241106161351376.png)
 
 还是要好好的读题干啊，就读题干的英语。
 
@@ -28,11 +28,11 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 运行这个程序，没了。
 
-![image-20241106162700543](./2%20Pondering%20Paths.assets/image-20241106162700543.png)
+![image-20241106162700543](./02%20Pondering%20Paths.assets/image-20241106162700543.png)
 
 但是不能使用相对路径。
 
-![image-20241106162807346](./2%20Pondering%20Paths.assets/image-20241106162807346.png)
+![image-20241106162807346](./02%20Pondering%20Paths.assets/image-20241106162807346.png)
 
 
 
@@ -40,7 +40,7 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 问题描述：切换目录
 
-![image-20241108142850375](./2%20Pondering%20Paths.assets/image-20241108142850375.png)
+![image-20241108142850375](./02%20Pondering%20Paths.assets/image-20241108142850375.png)
 
 
 
@@ -48,7 +48,7 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 所以你到底想要考察什么？
 
-![image-20241108143008709](./2%20Pondering%20Paths.assets/image-20241108143008709.png)
+![image-20241108143008709](./02%20Pondering%20Paths.assets/image-20241108143008709.png)
 
 
 
@@ -56,7 +56,7 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 ？？？？？
 
-![image-20241108143140149](./2%20Pondering%20Paths.assets/image-20241108143140149.png)
+![image-20241108143140149](./02%20Pondering%20Paths.assets/image-20241108143140149.png)
 
 
 
@@ -64,7 +64,7 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 考察你对相对地址的理解
 
-![image-20241108143447647](./2%20Pondering%20Paths.assets/image-20241108143447647.png)
+![image-20241108143447647](./02%20Pondering%20Paths.assets/image-20241108143447647.png)
 
 
 
@@ -92,7 +92,7 @@ pwd，这个指令告诉你，你现在在哪个目录下工作。
 
 考察你对.和..的理解。
 
-![image-20241108143835249](./2%20Pondering%20Paths.assets/image-20241108143835249.png)
+![image-20241108143835249](./02%20Pondering%20Paths.assets/image-20241108143835249.png)
 
 
 
@@ -118,7 +118,7 @@ hacker@paths~implicit-relative-path:/$ challenge/run
 
 如下图所示：
 
-![image-20241108145243685](./2%20Pondering%20Paths.assets/image-20241108145243685.png)
+![image-20241108145243685](./02%20Pondering%20Paths.assets/image-20241108145243685.png)
 
 # 9- home sweet home
 
@@ -126,5 +126,5 @@ hacker@paths~implicit-relative-path:/$ challenge/run
 
 如图所示：
 
-![image-20241108145454338](./2%20Pondering%20Paths.assets/image-20241108145454338.png)
+![image-20241108145454338](./02%20Pondering%20Paths.assets/image-20241108145454338.png)
 
