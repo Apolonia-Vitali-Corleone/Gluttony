@@ -24,41 +24,30 @@ hacker@piping~redirecting-more-output:~$ /challenge/run
 [INFO] WELCOME! This challenge makes the following asks of you:
 [INFO] - the challenge will check that output is redirected to a specific file path : myflag
 [INFO] - the challenge will output a reward file if all the tests pass : /flag
-
 [HYPE] ONWARDS TO GREATNESS!
-
 [INFO] This challenge will perform a bunch of checks.
 [INFO] If you pass these checks, you will receive the /flag file.
-
 [TEST] You should have redirected my stdout to a file called myflag. Checking...
-
 [FAIL] You did not satisfy all the execution requirements.
 [FAIL] Specifically, you must fix the following issue:
 [FAIL]   You have not redirected anything for this process' stdout.
-
 
 
 hacker@piping~redirecting-more-output:~$ /challenge/run > myflag
 [INFO] WELCOME! This challenge makes the following asks of you:
 [INFO] - the challenge will check that output is redirected to a specific file path : myflag
 [INFO] - the challenge will output a reward file if all the tests pass : /flag
-
 [HYPE] ONWARDS TO GREATNESS!
-
 [INFO] This challenge will perform a bunch of checks.
 [INFO] If you pass these checks, you will receive the /flag file.
-
 [TEST] You should have redirected my stdout to a file called myflag. Checking...
-
 [PASS] The file at the other end of my stdout looks okay!
 [PASS] Success! You have satisfied all execution requirements.
 
 
 hacker@piping~redirecting-more-output:~$ cat myflag
-
 [FLAG] Here is your flag:
 [FLAG] pwn.college{E0ksN7vqvfm_4v_3PN24S04HI9G.QX1YTN0wCO5IzW}
-
 hacker@piping~redirecting-more-output:~$ 
 ```
 
@@ -70,6 +59,7 @@ hacker@piping~redirecting-more-output:~$
 
 ```sh
 hacker@piping~appending-output:~$ /challenge/run > /home/hacker/the-flag
+
 
 hacker@piping~appending-output:~$ /challenge/run >> /home/hacker/the-flag
 
@@ -94,37 +84,27 @@ pwn.college{sgOD5A3MXOO6QcJJiVh3EOxhOQq.QX3ATO0wCO5IzW}
 hacker@piping~redirecting-errors:~$ /challenge/run > myflag 2> instructions
 
 # flag就在myflag
-hacker@piping~redirecting-errors:~$ cat myflag 
 
+hacker@piping~redirecting-errors:~$ cat myflag 
 [FLAG] Here is your flag:
 [FLAG] pwn.college{gAqgpdx49rd4kMA2RgVKktIdhoy.QX3YTN0wCO5IzW}
-
 # 看看instructions
+
 hacker@piping~redirecting-errors:~$ cat instructions 
 [INFO] WELCOME! This challenge makes the following asks of you:
 [INFO] - the challenge will check that output is redirected to a specific file path : myflag
 [INFO] - the challenge will check that error output is redirected to a specific file path : instructions
 [INFO] - the challenge will output a reward file if all the tests pass : /flag
-
 [HYPE] ONWARDS TO GREATNESS!
-
 [INFO] This challenge will perform a bunch of checks.
 [INFO] If you pass these checks, you will receive the /flag file.
-
 [TEST] You should have redirected my stdout to a file called myflag. Checking...
-
 [PASS] The file at the other end of my stdout looks okay!
-
 [TEST] You should have redirected my stderr to instructions. Checking...
-
 [PASS] The file at the other end of my stderr looks okay!
 [PASS] Success! You have satisfied all execution requirements.
 
 ```
-
-
-
-
 
 
 
@@ -133,19 +113,28 @@ hacker@piping~redirecting-errors:~$ cat instructions
 ```
 hacker@piping~redirecting-input:~$ /challenge/run <0  $(echo COLLEGE 1> PWN)
 bash: 0: No such file or directory
+
+
 hacker@piping~redirecting-input:~$ /challenge/run < $(echo COLLEGE 1> PWN)
 bash: $(echo COLLEGE > PWN): ambiguous redirect
+
+
 hacker@piping~redirecting-input:~$ echo COLLEGE 1> PWN
+
 hacker@piping~redirecting-input:~$ /challenge/run <0 PWN 
 bash: 0: No such file or directory
+
 hacker@piping~redirecting-input:~$ /challenge/run <0  
 bash: 0: No such file or directory
+
 hacker@piping~redirecting-input:~$ /challenge/run < PWN  
 Reading from standard input...
 Correct! You have redirected the PWN file into my standard input, and I read 
 the value 'COLLEGE' out of it!
 Here is your flag:
 pwn.college{wNfhReuDo5D0gOoYcvavxyhSEAT.QXwcTN0wCO5IzW}
+
+
 hacker@piping~redirecting-input:~$ 
 
 ```
@@ -160,25 +149,22 @@ Redirect的>本身就是对stream中的0和1和2操作的
 
 # 6-Grepping stored results
 
-```
+```sh
 hacker@piping~grepping-stored-results:~$ /challenge/run > /tmp/data.txt
 [INFO] WELCOME! This challenge makes the following asks of you:
 [INFO] - the challenge will check that output is redirected to a specific file path : /tmp/data.txt
 [INFO] - the challenge will output a reward file if all the tests pass : /challenge/.data.txt
-
 [HYPE] ONWARDS TO GREATNESS!
-
 [INFO] This challenge will perform a bunch of checks.
 [INFO] If you pass these checks, you will receive the /challenge/.data.txt file.
-
 [TEST] You should have redirected my stdout to a file called /tmp/data.txt. Checking...
-
 [HINT] File descriptors are inherited from the parent, unless the FD_CLOEXEC is set by the parent on the file descriptor.
 [HINT] For security reasons, some programs, such as python, do this by default in certain cases. Be careful if you are
 [HINT] creating and trying to pass in FDs in python.
-
 [PASS] The file at the other end of my stdout looks okay!
 [PASS] Success! You have satisfied all execution requirements.
+
+
 hacker@piping~grepping-stored-results:~$ grep flag /tmp/data.txt
 [FLAG] Here is your flag:
 unflagging
@@ -226,33 +212,32 @@ flagellating
 flagstones
 hacker@piping~grepping-stored-results:~$ grep pwn.college  /tmp/data.txt
 pwn.college{w-1cfkgp1f-yr2OS7SP8rzktJJb.QX4EDO0wCO5IzW}
+
+
 hacker@piping~grepping-stored-results:~$ 
 
 ```
 
 # 7-Grepping live output
 
-```
+```bash
 hacker@piping~grepping-live-output:~$ /challenge/run | grep pwn.college
 [INFO] WELCOME! This challenge makes the following asks of you:
 [INFO] - the challenge checks for a specific process at the other end of stdout : grep
 [INFO] - the challenge will output a reward file if all the tests pass : /challenge/.data.txt
-
 [HYPE] ONWARDS TO GREATNESS!
-
 [INFO] This challenge will perform a bunch of checks.
 [INFO] If you pass these checks, you will receive the /challenge/.data.txt file.
-
 [TEST] You should have redirected my stdout to another process. Checking...
 [TEST] Performing checks on that process!
-
 [INFO] The process' executable is /nix/store/xpq4yhadyhazkcsggmqd7rsgvxb3kjy4-gnugrep-3.11/bin/grep.
 [INFO] This might be different than expected because of symbolic links (for example, from /usr/bin/python to /usr/bin/python3 to /usr/bin/python3.8).
 [INFO] To pass the checks, the executable must be grep.
-
 [PASS] You have passed the checks on the process on the other end of my stdout!
 [PASS] Success! You have satisfied all execution requirements.
 pwn.college{IVkceroh--yPCjvmsG-8dOuYq5W.QX5EDO0wCO5IzW}
+
+
 hacker@piping~grepping-live-output:~$ 
 
 ```
