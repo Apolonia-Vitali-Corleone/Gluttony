@@ -690,3 +690,45 @@ sniff(filter="tcp", prn=sniff_callback, iface="eth0")
 
 呜呜呜呜呜呜最后一块拼图终于拼上了。
 
+
+
+
+
+# 本地运行挑战
+
+这是我为这个level14专门学的东西。
+
+本内容只限于本模块的挑战。
+
+首先是pwn.college有一个叫做pwnshop的工具。
+
+虽然我不知道在我本次探索中是否能用到。大概是把pwn.college的python给拿过来？
+
+所以先说虚拟环境吧。
+
+首先要开启一个python的虚拟环境。
+
+然后安装pwnshop。
+
+![image-20241129153413427](./03%20Intercepting%20Communication.assets/image-20241129153413427.png)
+
+安装pwnshop（注意python的路径）
+
+![image-20241129153559711](./03%20Intercepting%20Communication.assets/image-20241129153559711.png)
+
+多了一大堆东西
+
+切换到对应的目录运行即可（比如第14道题目）
+
+![image-20241129153834297](./03%20Intercepting%20Communication.assets/image-20241129153834297.png)
+
+如果是我们本机的python的话，其实也能运行。我靠，为什么呢？
+
+而且本机没有安装pwnshop
+
+![image-20241129154126869](./03%20Intercepting%20Communication.assets/image-20241129154126869.png)
+
+然后运行脚本也能成功。
+
+我靠，牛逼了。
+

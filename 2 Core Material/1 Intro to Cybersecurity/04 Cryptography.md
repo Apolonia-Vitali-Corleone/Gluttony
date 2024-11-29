@@ -29,8 +29,8 @@ print(f"JSON Data: {json_data}")
 
 POST 请求通常用于将数据发送到服务器（例如提交表单或上传数据）。使用 `requests.post()` 方法可以发送 POST 请求。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 # 发送 POST 请求
 data = {'username': 'john', 'password': '123456'}
@@ -47,8 +47,8 @@ print(f"Response Text: {response.text}")
 
 在发起 GET 请求时，可以通过 `params` 参数传递 URL 参数。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 # 使用 URL 参数
 params = {'q': 'python', 'page': 2}
@@ -65,8 +65,8 @@ print(f"Response Text: {response.text[:200]}")  # 只打印前200个字符
 
 `requests` 还支持 PUT 和 DELETE 请求，分别用于更新资源和删除资源。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 # PUT 请求更新数据
 response = requests.put('https://httpbin.org/put', data={'name': 'john'})
@@ -83,8 +83,8 @@ print(response.text)
 
 HTTP 请求头部（Headers）可以包含请求的元数据（如用户代理、授权信息等）。通过 `headers` 参数可以添加自定义请求头。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 headers = {
     'User-Agent': 'my-app',
@@ -100,8 +100,8 @@ print(response.text)
 
 你可以通过 `cookies` 参数传递 cookies，或者使用 `requests.get()` 或 `requests.post()` 返回的 cookies。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 # 发送请求时带上 Cookies
 cookies = {'session_id': '123456'}
@@ -116,8 +116,8 @@ print(response.text)
 
 可以通过 `response.status_code` 检查 HTTP 响应的状态码。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 response = requests.get('https://jsonplaceholder.typicode.com/posts')
 
@@ -131,8 +131,8 @@ else:
 
 你可以检查响应的内容类型，以确定返回数据的格式。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 response = requests.get('https://jsonplaceholder.typicode.com/posts')
 
@@ -145,8 +145,8 @@ print(f"Content-Type: {content_type}")
 
 `requests` 提供了 `elapsed` 属性来获取请求的响应时间。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 response = requests.get('https://jsonplaceholder.typicode.com/posts')
 print(f"Request took: {response.elapsed.total_seconds()} seconds")
@@ -158,8 +158,8 @@ print(f"Request took: {response.elapsed.total_seconds()} seconds")
 
 在网络请求过程中，可能会出现一些异常，比如超时、网络不可达等。可以通过 `try-except` 来处理这些异常。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 try:
     response = requests.get('https://jsonplaceholder.typicode.com/posts', timeout=5)
@@ -172,8 +172,8 @@ except requests.exceptions.RequestException as e:
 
 你可以设置请求的超时时间，防止请求长时间阻塞。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 try:
     response = requests.get('https://jsonplaceholder.typicode.com/posts', timeout=3)
@@ -186,8 +186,8 @@ except requests.exceptions.Timeout:
 
 通过 `files` 参数，`requests` 可以轻松实现文件上传。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 files = {'file': open('myfile.txt', 'rb')}
 response = requests.post('https://httpbin.org/post', files=files)
@@ -198,8 +198,8 @@ print(response.text)
 
 `requests.Session()` 允许你在多个请求之间保持某些参数（如 Cookies 和 Headers）的一致性。这样做可以提高性能并简化代码。
 
-```
-pythonCopy codeimport requests
+```py
+import requests
 
 # 使用会话保持 Cookie 和 Headers
 with requests.Session() as s:
@@ -243,7 +243,7 @@ select substr(x, 1, 6) from secrets
 
 ![image-20241125144308258](./04%20Cryptography.assets/image-20241125144308258.png)
 
-end
+
 
 # 02-Hex
 
@@ -1110,11 +1110,186 @@ if __name__ == "__main__":
 
 # 11-AES-ECB-CPA-Suffix
 
+## 前置知识
+
+`pt = flag[-length:]` 是 Python 中的一个切片操作，用于从字符串 `flag` 中提取一个子字符串。具体含义如下：
+
+- `flag` 是一个字符串（可能是某个标志或密文）。
+- `length` 是一个整数，表示要提取的子字符串的长度。
+- `flag[-length:]` 从字符串 `flag` 的末尾开始，提取长度为 `length` 的子字符串。
+
+例子：
+
+如果 `flag = "this_is_a_test_flag"`，`length = 4`，那么：
+
+```py
+pt = flag[-4:]
+```
+
+将会从 `flag` 的末尾提取出 `4` 个字符，结果是：
+
+```py
+pt = "flag"
+```
+
+因此，`pt` 将保存字符串 `"flag"`。
+
+切片的语法是 `[start:end]`，其中 `start` 是开始索引（包含该位置），`end` 是结束索引（不包含该位置）。如果 `start` 是负数，表示从字符串的末尾倒数计数。
+
+python  将所有ascii可视化字符放在一个列表里
+
+
+
+ChatGPT said:
+
+ChatGPT
+
+你可以通过以下 Python 代码将所有 ASCII 可视字符（从 32 到 126）放在一个列表中：
+
+```py
+# 获取所有 ASCII 可视字符
+ascii_visible_chars = [chr(i) for i in range(32, 127)]
+
+# 打印结果
+print(ascii_visible_chars)
+```
+
+解释：
+
+- `chr(i)` 用于将一个整数 `i` 转换为相应的 ASCII 字符。
+
+- ```py
+  range(32, 127)
+  ```
+
+   生成从 32 到 126 的整数，这些整数代表了可视的 ASCII 字符。
+
+  - ASCII 码 32 是空格字符，126 是波浪号 `~`。
+
+执行后，`ascii_visible_chars` 将包含所有从空格到波浪号之间的可视字符列表。
+
+ChatGPT said:
+
+ChatGPT
+
+在 Python 中，`process` 通常是指通过 `pwntools` 库创建的进程。你的代码示例中，`process("py", arg"")` 看起来是想用 `process` 启动一个进程并传递参数，但语法有些不对。正确的用法是：
+
+```py
+from pwn import *
+
+# 启动进程并传递参数
+p = process(["python", "your_script.py", "arg1", "arg2"])
+```
+
+解释：
+
+- `process()` 是 `pwntools` 中用来启动子进程的函数。
+- `"python"` 是你要运行的命令，通常是 Python 解释器的路径。
+- `"your_script.py"` 是你要运行的 Python 脚本。
+- `"arg1", "arg2"` 是你要传递给脚本的参数。
+
+如果你不使用 `pwntools`，而只是想要启动一个简单的 Python 进程并传递参数，可以使用 `subprocess` 模块：
+
+```py
+import subprocess
+
+# 启动进程并传递参数
+p = subprocess.Popen(["python", "your_script.py", "arg1", "arg2"])
+```
+
+这里的 `subprocess.Popen()` 也可以用来启动进程并传递参数。
+
+总结：
+
+- 使用 `process()` 时要传递一个包含命令和参数的列表。
+- `subprocess.Popen()` 也有类似的用法。
+
+## 思路
+
+我他妈的真牛逼
+
+这就是纯爆破
+
+注意是倒序  pwn.college{this_a_fake_flag}
+
+倒序，爆破的时候注意}是在最后一位，字符要加载}的前边不是后边。
+
+## EXP
+
+```py
+from pwn import *
+import base64
+
+# 假设你已经能通过 pwn 模块与服务器进行交互
+# p = process(["python3", "./run"])
+p = process(["/challenge/run"])
+
+context.log_level = "debug"
+
+flag = "}"
+ascii_visible_chars = [chr(i) for i in range(32, 127)]  # 可视字符集
+
+def my_data_processing(name, data):
+    print(f"[*]info : {name}")
+    print(data)
+    print("--------------------")
+
+# 获取尾部密文
+def get_flag_tail_ciphertext(length):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"2")  # 选择2，加密 flag 的尾部
+    p.recvuntil(b"Length? ")
+    p.sendline(str(length).encode())  # 发送请求的长度
+    # print(p.recv())
+    
+    result = p.recvline().strip().split(b": ")[1]
+    # ciphertext = base64.b64decode(result)
+    # print(f"[*] Tail ciphertext (length {length}): {ciphertext}")  # 输出密文进行调试
+    print(result)
+    return result
+
+# 获取普通明文的密文
+def encrypt_plaintext(plaintext):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"1")  # 选择1，加密自定义的明文
+    p.recvuntil(b"Data? ")
+    p.sendline(plaintext)  # 发送数据
+    result = p.recvline().strip().split(b": ")[1]
+    # ciphertext = base64.b64decode(result)
+    # print(f"[*] Encrypting plaintext: {plaintext} -> {ciphertext}")  # 输出加密结果进行调试
+    print(result)
+    return result
+
+# 攻击函数
+def solve_challenge():
+    global flag
+
+    # 假设flag最大长度为55
+    for i in range(2, 56):  # 尝试从1个字符到55个字符
+        # 获取当前尾部密文
+        flag_tail_ct = get_flag_tail_ciphertext(i)
+        print(flag_tail_ct)
+        
+        for char in ascii_visible_chars:
+                tem_flag = char + flag 
+                print(tem_flag)
+                choice1_result = encrypt_plaintext(tem_flag)
+                print(choice1_result)
+                if choice1_result == flag_tail_ct:
+                        flag = char + flag
+                        break
+
+if __name__ == "__main__":
+    solve_challenge()
+    print(f"[*] Final flag: {flag}")  # 输出最终得到的 flag
+    
+```
+
 
 
 # 12-AES-ECB-CPA-Prefix
 
-
+flag长度为55
 
 
 
