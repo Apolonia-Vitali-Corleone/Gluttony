@@ -78,7 +78,7 @@ chatgpt的答案：
 
 > Find and connect to a remote host on a large network
 
-### 思路
+## 思路
 
 也就是说，在更大的子网范围内搜索存活主机。
 
@@ -683,6 +683,10 @@ print("go ahead")
 
 sniff(filter="tcp", prn=sniff_callback, iface="eth0")
 ```
+
+## 截图
+
+![image-20241202173330765](./03%20Intercepting%20Communication.assets/image-20241202173330765.png)
 
 ## 总结
 

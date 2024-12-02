@@ -1,26 +1,14 @@
-
-
-
-
-
-
-
-
-
-
-# 1
+# 1-Printing Variables
 
 env
 
 
 
-# 1
-
 ```
 设置变量什么都不需要定义，shell真牛逼
 ```
 
-# 2
+# 2-Setting Variables
 
 ```shell
 hacker@variables~multi-word-variables:~$ PWN="COLLEGE YEAH"

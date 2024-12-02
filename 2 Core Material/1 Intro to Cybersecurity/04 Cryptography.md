@@ -1,4 +1,6 @@
-# requests
+# 补充知识
+
+## requests
 
 ### 基本用法
 
@@ -223,7 +225,7 @@ with requests.Session() as s:
 
 
 
-# substr
+## substr
 
 如何使用？
 
@@ -236,6 +238,14 @@ select substr(x, 1, 6) from secrets
 
 
 # 01-XOR
+
+## 问题描述
+
+就是考察异或
+
+## 思路
+
+用python的异或
 
 ## 截图
 
@@ -714,6 +724,8 @@ print("解密结果:", plaintext)
 
 
 # 07-Many-time Pad
+
+## 问题描述
 
 
 
@@ -1289,7 +1301,45 @@ if __name__ == "__main__":
 
 # 12-AES-ECB-CPA-Prefix
 
+## 思路
+
 flag长度为55
+
+按照
+
+然后，我们输入
+
+a*10+flag就得到}，根据block4，1个字符的加密
+
+a*11+flag，就得到_}，2个字符的加密
+
+a*12，就得到__}，3个字符的加密
+
+a*25   根据block4，  16个
+
+a*26 就还是block4  得到 17
+
+a*64，就得到55个字符的加密
+
+
+
+51   -    59   距离64
+
+
+
+最多14
+
+最少5/4
+
+5-14
+
+5 6 7 8 9
+
+
+
+
+
+
 
 
 
