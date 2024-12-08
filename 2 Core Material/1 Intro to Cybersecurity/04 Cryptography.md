@@ -1303,59 +1303,455 @@ if __name__ == "__main__":
 
 ## 思路
 
-flag长度为55
+### 基本概念
 
-按照
+- 明文，秘钥，密文
 
-然后，我们输入
+  - 明文：plain_text
 
-a*10+flag就得到}，根据block4，1个字符的加密
+  - 秘钥：key
 
-a*11+flag，就得到_}，2个字符的加密
+  - 密文：cipher_text
 
-a*12，就得到__}，3个字符的加密
+### 加密算法说明
 
-a*25   根据block4，  16个
+在aes的ecb模式下，明文按照16个字节分块。设明文长度为n
 
-a*26 就还是block4  得到 17
+1. 如果n/16能整除，那么明文长度变为n+16(补充16个0x10)。然后加密，加密后ciphertext长度为n+16
+2. 如果n/16不能整除。假设最后一个块有x个字节，补充16-x个字节，每个字节的值都是16-x。明文长度变为n+16-x。加密后密文长度为n+16-x。
 
-a*64，就得到55个字符的加密
+这一题`不考虑n/16能整除然后还要补充`的这个情况。也就是说：
+
+1. 如果n/16能整除，那么明文长度还是n。然后加密。加密后ciphertext长度还是n。
+2. 如果n/16不能整除。假设最后一个块有x个字节，补充16-x个字节，每个字节的值都是16-x。明文长度变为n+16-x。加密后密文长度为n+16-x。
+
+### 1.获取到padding长度
+
+首先第一步，获取到使得flag长度整除16的padding的长度。设这个padding的长度为n:
+
+- 如果明文长度整除16，那么多出一个字节就会导致多出一个块。
+  1. 当n=0的时候，有4个block
+  2. 当n=0 + 1 的时候，有5个block
+
+- 如果明文长度不整除16，那么就要找到这个n：
+
+  1. 当n的时候，有4个block
+
+  1. 当n+1的时候，有5个block
+
+遍历就可以找到了。
+
+### 2.解密步骤
+
+找到这个值之后，我们就可以开始解密了。
+
+假设flag长度为54，那么padding长度就是10。
+
+1. 第1步，获取到flag的倒数第1个字节的加密值。
+
+   我们需要填充11个字符。
+
+   然后我们会在block5得到flag的最后一个字节的加密值。
+
+2. 第2步，我们需要遍历所有的可视化字符，获取到它们加密后的内容，构成一个密码本，形如：
+
+   ```
+   {"a" : "bakjbfoaou", "b" : "cakjbfoaou"........}
+   ```
+
+   
+
+3. 第3步，我们进行对比，获取到flag的倒数第1个字节。
+
+4. 第4步，获取到flag的倒数第2个字节的加密值。
+
+   我们需要填充12个字符。
+
+   然后我们会在block5得到flag的倒数2个字节的加密值。
+
+5. 第5步，我们需要右侧添加已经找到的字节，遍历所有的可视化字符，获取到它们加密后的内容，构成一个密码本，形如：{"a}" : "bakjbfoaou", "b}" : "cakjbfoaou"........}
+
+6. 第6步，我们进行对比，获取到flag的倒数第2个字节。
+
+7. 第7步，一直循环，直至我们找到flag的倒数第16个字节。
+
+8. 随后，我们需要截取已知的flag的长度，保持单字节爆破。
+
+   第8步，我们要明白：我们始终只需要block5的加密内容。
+
+9. 第9步，我们需要截取已知的flag的长度为前15，保持单字节爆破。
+
+   右侧添加已经找到的字节，遍历所有的可视化字符，获取到它们加密后的内容，构成一个密码本，形如：
+
+   ```
+   {"aeadbeefdeadbeef":"aakjbfoaou","beadbeefdeadbeef":"bakjbfoaou","ceadbeefdeadbeef":"cakjbfoaou"........}
+   ```
+
+   
+
+10. 第10步，我们进行对比，获取到flag的倒数某个字节。
 
 
 
-51   -    59   距离64
+---
 
 
 
-最多14
+## EXP
 
-最少5/4
-
-5-14
-
-5 6 7 8 9
+```py
+from pwn import *
+import base64
 
 
+context.log_level = "debug"
+
+
+p = process(["/challenge/run"])
+
+
+flag = ""
+
+
+ascii_visible_chars = ['}', '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|',  '~']
+
+
+def query(x):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"2")
+    p.recvuntil(b"Data? ")
+    p.sendline(b'a' * x)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    return len(result)
+    
+    
+def get_the_length_of_flag():
+    target_value = -1
+    for i in range(0,20) :
+        result = query(i)
+        if result == 108:
+            target_value = i
+            break
+    print(target_value)
+    return target_value - 1
+
+
+def choice1(data):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"1")
+    p.recvuntil(b"Data? ")
+    p.sendline(data)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    print(result)
+    return result
+
+def choice2(data):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"2")
+    p.recvuntil(b"Data? ")
+    p.sendline(data)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    result = base64.b64decode(result)
+    print(result)
+    print(len(result))
+    block5 = base64.b64encode(result[64:])
+    print(block5)
+    # p.recvuntil(b"Block 5: ")
+    # block5 = p.recvuntil(b"\n")[:-1]
+    # print(block5)
+    return block5
+
+
+def solve():
+    # 声明flag'
+    global flag
+    
+    # 第一步，获取到padding的长度
+    flag_length = get_the_length_of_flag()
+    
+    # 第一轮遍历
+    # flag长度为0
+    # 确认pad的长度范围
+    for i in range(flag_length + 1, flag_length + 64):
+        padding = b'a' * i
+        # 获取到block5的内容
+        block5 = choice2(padding)
+        for x in ascii_visible_chars:
+            temp = flag if len(flag) <= 15 else flag[:15]
+            temp = x + flag
+            encode_content = choice1(temp)
+            if block5 == encode_content:
+                flag = x + flag
+                print("find one flag!!!!!!!!!!!!!!!!!!!!!!!!!")
+                break
+
+                
+''' 
+就是找到flag的长度，一定是四个block。然后我们补齐前边，让flag最后一个字符成为第五块，然后和已知可视化字符匹配，然后再pad一个，获取倒数第二个，一直到16个，然后再pad一个，这时候就是6个block，第六个block是}。然后第五个block的后15个我们都知道。我们再得到一个字符，然后再pad，在pad，直到32个flag字符都获取到。然后再pad，第七个block是}。然后第五个block的后15个我们都知道。然后再搞flag的48个字符。
+'''
+
+if __name__ == "__main__" :
+    solve()
+    
+
+
+```
 
 
 
+## 截图
 
+我他妈的是个天才！
 
-
-
-
-
-
-
-
+![image-20241207165436563](./04%20Cryptography.assets/image-20241207165436563.png)
 
 
 
 # 13-AES-ECB-CPA-Prefix-2
 
+## 思路
+
+在aes的ecb模式下，明文按照16个字节分块。设明文长度为n
+
+1. 如果n/16能整除，那么明文长度变为n+16(补充16个0x10)。然后加密，加密后ciphertext长度为n+16
+2. 如果n/16不能整除。假设最后一个块有x个字节，补充16-x个字节，每个字节的值都是16-x。明文长度变为n+16-x。加密后密文长度为n+16-x。
+
+与上一题的区别就在于，查找这个padding的长度时，要改一改你的算法。
+
+## EXP
+
+```py
+from pwn import *
+import base64
+
+
+context.log_level = "debug"
+
+
+p = process(["/challenge/run"])
+
+
+flag = ""
+
+
+ascii_visible_chars = ['}', '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|',  '~']
+
+
+def query(x):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"2")
+    p.recvuntil(b"Data? ")
+    p.sendline(b'a' * x)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    return len(result)
+    
+    
+def get_the_length_of_flag():
+    target_value = -1
+    for i in range(0,20) :
+        result = query(i)
+        if result == 108:
+            target_value = i
+            break
+    print(target_value)
+    return target_value
+
+
+def choice1(data):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"1")
+    p.recvuntil(b"Data? ")
+    p.sendline(data)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    print(result)
+    return result
+
+def choice2(data):
+    p.recvuntil(b"Choice? ")
+    p.sendline(b"2")
+    p.recvuntil(b"Data? ")
+    p.sendline(data)
+    p.recvuntil(b"Result: ")
+    result = p.recvuntil(b"\n")[:-1]
+    print(result)
+    print(len(result))
+    result = base64.b64decode(result)
+    print(result)
+    print(len(result))
+    block5 = base64.b64encode(result[64:])
+    print(block5)
+    # p.recvuntil(b"Block 5: ")
+    # block5 = p.recvuntil(b"\n")[:-1]
+    # print(block5)
+    return block5
+
+
+def solve():
+    # 声明flag'
+    global flag
+    
+    # 第一步，获取到padding的长度
+    flag_length = get_the_length_of_flag()
+    
+    # 第一轮遍历
+    # flag长度为0
+    # 确认pad的长度范围
+    for i in range(flag_length + 1, flag_length + 64):
+        padding = b'a' * i
+        # 获取到block5的内容
+        block5 = choice2(padding)
+        for x in ascii_visible_chars:
+            temp = flag if len(flag) <= 15 else flag[:15]
+            temp = x + flag
+            encode_content = choice1(temp)
+            if block5 == encode_content:
+                flag = x + flag
+                print("find one flag!!!!!!!!!!!!!!!!!!!!!!!!!")
+                break
+                
+                
+if __name__ == "__main__" :
+    solve()
+
+```
+
+
+
+## 截图
+
+如图
+
+![image-20241207231726665](./04%20Cryptography.assets/image-20241207231726665.png)
+
 # 14-AES-ECB-CPA-Prefix-Miniboss
 
+## 思路
+
+明文按照16个字节分块。设明文长度为n
+
+1. 如果n/16能整除，那么明文长度变为n+16(补充16个0x10)。然后加密。加密后ciphertext长度为n+16
+2. 如果n/16不能整除，那就看最后一个块有x个字节。那就补充16-x个16-x。然后明文长度就变为n+16-x。加密后密文长度为n+16-x。
+
+首先第一步，获取到padding的长度。
+
+然后获取某个字节的密文，然后我们自己构造和爆破。
+
+## EXP
+
+```py
+from pwn import *
+import base64
+
+
+# context.log_level = "debug"
+
+
+p = process(["/challenge/run"])
+
+
+flag = ""
+
+
+ascii_visible_chars = ['}', '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|',  '~']
+
+
+def query(x):
+    p.recvuntil(b"Data? ")
+    p.sendline(base64.b64encode(b'a' * x))
+    p.recvuntil(b"Ciphertext: ")
+    result = p.recvuntil(b"\n")[:-1]
+    return len(result)
+    
+    
+def get_the_length_of_init_padding():
+    target_value = -1
+    for i in range(0,20) :
+        result = query(i)
+        if result > 88:
+            target_value = i
+            break
+    # print(target_value)
+    return target_value
+
+
+# 爆破专用
+def choice_1(data):
+    p.recvuntil(b"Data? ")
+    p.sendline(base64.b64encode(data))
+    p.recvuntil(b"Ciphertext: ")
+    result = p.recvuntil(b"\n")[:-1]
+    # print(result)
+    # print(len(result))
+    result = base64.b64decode(result)
+    # print(result)
+    # print(len(result))
+    result = base64.b64encode(result[:16])
+    # print(result)
+    # print(len(result))
+    return result
+
+
+# 获取到flag的某个字节的加密内容
+def choice_2(data):
+    p.recvuntil(b"Data? ")
+    p.sendline(base64.b64encode(data))
+    p.recvuntil(b"Ciphertext: ")
+    result = p.recvuntil(b"\n")[:-1]
+    # print(result)
+    # print(len(result))
+    result = base64.b64decode(result)
+    # print(result)
+    # print(len(result))
+    result = base64.b64encode(result[64:80])
+    # print(result)
+    # print(len(result))
+    return result
+
+
+def solve():
+    global flag
+
+    init_length = get_the_length_of_init_padding()
+
+    for i in range(init_length + 1, init_length + 64):
+        result2 = choice_2(b'a' * i)
+        for x in ascii_visible_chars:
+            if len(flag) < 15:
+                # 这就需要我们自己来构造
+                padding = x + flag
+                number = 16 - len(padding)
+                value = bytes([number])
+                payload = padding.encode() + value * number
+            else:
+                payload = (x + flag[:15]).encode()
+            
+            result1 = choice_1(payload)
+
+            if result1 == result2:
+                flag = x + flag
+        print(flag)
+                
+
+
+if __name__ == "__main__" :
+    solve()
+
+```
+
+## 截图
+
+太酷了
+
+![image-20241208193941234](./04%20Cryptography.assets/image-20241208193941234.png)
+
 # 15-AES-ECB-CPA-Prefix-Boss
+
+
 
 # 16-AES-CBC
 
